@@ -1,0 +1,47 @@
+version: '2'
+
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - backup-data:/data/db
+    networks:
+      - auth-react-network
+  server:
+    image: jerrywei17/server:latest
+    build: ./server
+    depends_on:
+      - mongo
+    networks:
+      - auth-react-network
+    env_file:
+      - ./env/.dev
+    volumes:
+      - ./server/src:/usr/src/app/src
+    ports:
+      -  "5000:5000"
+    command: yarn run dev
+  # client:
+  #   image: jerrywei17/client:latest
+  #   build: ./client
+  #   volumes:
+  #     - ./nginx/client-dist:/usr/src/app/build
+  #   command: sh -c "yarn run build"
+  # nginx:
+  #   restart: always
+  #   image: nginx:latest
+  #   networks:
+  #     - auth-react-network
+  #   volumes:
+  #     - ./nginx/conf.d:/etc/nginx/conf.d
+  #     - ./nginx/client-dist:/usr/src/app/client
+  #   ports:
+  #     - 3000:3000
+networks:
+  auth-react-network:
+    driver: bridge
+
+volumes:
+  backup-data:  # db
