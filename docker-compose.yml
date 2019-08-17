@@ -10,8 +10,7 @@ services:
     networks:
       - auth-react-network
   server:
-    image: jerrywei17/server:latest
-    build: ./server
+    image: jerrywei17/jwt-auth-webapp:latest
     depends_on:
       - mongo
     networks:
@@ -24,21 +23,21 @@ services:
       -  "5000:5000"
     command: yarn run dev
   # client:
-  #   image: jerrywei17/client:latest
+  #   image: jerrywei17/jwt-auth-client:latest
   #   build: ./client
   #   volumes:
   #     - ./nginx/client-dist:/usr/src/app/build
   #   command: sh -c "yarn run build"
-  # nginx:
-  #   restart: always
-  #   image: nginx:latest
-  #   networks:
-  #     - auth-react-network
-  #   volumes:
-  #     - ./nginx/conf.d:/etc/nginx/conf.d
-  #     - ./nginx/client-dist:/usr/src/app/client
-  #   ports:
-  #     - 3000:3000
+  nginx:
+    restart: always
+    image: jerrywei17/jwt-auth-nginx:latest
+    networks:
+      - auth-react-network
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/client-dist:/usr/src/app/client
+    ports:
+      - 3000:3000
 networks:
   auth-react-network:
     driver: bridge
